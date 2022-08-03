@@ -1,8 +1,8 @@
 package com.krock.shoppinglist.domain
 
 data class ShopItem(
-    val id: Int,
     val name: String,
     val count: Int,
-    val enabled: Boolean
+    val enabled: Boolean,
+    var id: Int = -1
 )
