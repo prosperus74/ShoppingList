@@ -6,20 +6,29 @@ import com.krock.shoppinglist.domain.ShopListRepository
 class ShopListRepositoryImpl : ShopListRepository {
     private val shopList: MutableList<ShopItem> = ArrayList()
     private var itemId = 0
-    override fun addShopItem(shopItem: ShopItem) {
+
+    init {
+        for (i in 0 until 10){
+            val shopItem = ShopItem("Name${i}",1,true)
+            addShopItem(shopItem)
+        }
+
+    }
+
+
+    override fun addShopItem( shopItem: ShopItem) {
         if (shopItem.id == UNDEFINED){
             shopItem.id = itemId++
         }
         shopList.add(shopItem)
     }
 
-    override fun deleteShopItem(shopItemId: Int) {
-        val shopItem = getShopItem(shopItemId)
+    override fun deleteShopItem(shopItem: ShopItem) {
         shopList.remove(shopItem)
     }
 
     override fun editShopItem(shopItem: ShopItem) {
-        deleteShopItem(shopItem.id)
+        deleteShopItem(shopItem)
         addShopItem(shopItem)
     }
 
