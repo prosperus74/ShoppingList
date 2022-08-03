@@ -1,10 +1,13 @@
 package com.krock.shoppinglist.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.krock.shoppinglist.domain.ShopItem
 import com.krock.shoppinglist.domain.ShopListRepository
 
 class ShopListRepositoryImpl : ShopListRepository {
-    private val shopList: MutableList<ShopItem> = ArrayList()
+    private val shopList : MutableList<ShopItem> = ArrayList()
+    private val liveShopList: MutableLiveData<List<ShopItem>> = MutableLiveData();
     private var itemId = 0
 
     init {
@@ -20,15 +23,18 @@ class ShopListRepositoryImpl : ShopListRepository {
         if (shopItem.id == UNDEFINED){
             shopItem.id = itemId++
         }
-        shopList.add(shopItem)
+        shopList. add(shopItem)
+        update()
     }
 
     override fun deleteShopItem(shopItem: ShopItem) {
         shopList.remove(shopItem)
+        update()
     }
 
     override fun editShopItem(shopItem: ShopItem) {
-        deleteShopItem(shopItem)
+        val oldElement = getShopItem(shopItem.id)
+        shopList.remove(oldElement)
         addShopItem(shopItem)
     }
 
@@ -37,9 +43,15 @@ class ShopListRepositoryImpl : ShopListRepository {
             ?: throw RuntimeException("Element Id =${shopItemId} not found")
     }
 
-    override fun getShopList(): List<ShopItem> {
-        return shopList.toList() // возвращаем копию списка для исключения воздействия
+    override fun getShopList(): LiveData<List<ShopItem>> {
+        return liveShopList
     }
+
+    private fun update() {
+        liveShopList.value = shopList.toList()
+    }
+
+
     companion object{
         private const val UNDEFINED = -1
     }
