@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         setRecyclerView()
         viewModel.shopList.observe(this) {
-            adapter.shopList = it
+            adapter.submitList(it)
             Log.d(TAG, it.toString())
         }
     }
@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                viewModel.deleteShopItem(adapter.shopList.get(viewHolder.adapterPosition))
+                viewModel.deleteShopItem(adapter.currentList.get(viewHolder.adapterPosition))
             }
         }
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
