@@ -13,20 +13,20 @@ import com.krock.shoppinglist.R
 import com.krock.shoppinglist.domain.ShopItem
 import java.lang.Exception
 
-class ShopListAdapter : ListAdapter<ShopItem,ShopListAdapter.ShopListViewHolder> (ShopItemDiffCallback()) {
+class ShopListAdapter : ListAdapter<ShopItem, ShopListViewHolder>(ShopItemDiffCallback()) {
 
-    var onShopItemLongClick : ((ShopItem) -> Unit)? =null
-    var onShopItemClick : ((ShopItem) -> Unit)? =null
+    var onShopItemLongClick: ((ShopItem) -> Unit)? = null
+    var onShopItemClick: ((ShopItem) -> Unit)? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopListViewHolder {
-        val layoutId = when(viewType) {
-            ENABLED ->   R.layout.item_shop_enabled
-            DISABLED ->     R.layout.item_shop_disabled
+        val layoutId = when (viewType) {
+            ENABLED -> R.layout.item_shop_enabled
+            DISABLED -> R.layout.item_shop_disabled
             else -> throw RuntimeException("unknown viewType $viewType")
         }
         val view: View = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
-       return ShopListViewHolder(view)
+        return ShopListViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ShopListViewHolder, position: Int) {
@@ -35,20 +35,16 @@ class ShopListAdapter : ListAdapter<ShopItem,ShopListAdapter.ShopListViewHolder>
         holder.tvCount.text = shopItem.count.toString()
         Log.d(TAG, " Binding ${shopItem.enabled}")
 
-        holder.itemView.setOnLongClickListener{
+        holder.itemView.setOnLongClickListener {
             onShopItemLongClick?.invoke(shopItem)
             true
         }
 
-        holder.itemView.setOnClickListener{
+        holder.itemView.setOnClickListener {
             onShopItemClick?.invoke(shopItem)
         }
     }
 
-    class ShopListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvName: TextView = itemView.findViewById(R.id.tv_name)
-        val tvCount: TextView = itemView.findViewById(R.id.tv_count)
-    }
 
     companion object {
         private const val TAG = "ShopListAdapter"
