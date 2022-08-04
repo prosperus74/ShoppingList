@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.krock.shoppinglist.R
 import com.krock.shoppinglist.domain.ShopItem
@@ -15,9 +16,15 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
     var count = 0
     var shopList: List<ShopItem> = ArrayList()
         set(value) {
+            val shopListDiffCallback  = ShopListDiffCallback(shopList,value)
+            val diffResult = DiffUtil.calculateDiff(shopListDiffCallback)
+            diffResult.dispatchUpdatesTo(this)
             field = value
-            notifyDataSetChanged()
         }
+
+    var onShopItemLongClick : ((ShopItem) -> Unit)? =null
+    var onShopItemClick : ((ShopItem) -> Unit)? =null
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopListViewHolder {
         val layoutId = when(viewType) {
@@ -35,6 +42,15 @@ class ShopListAdapter : RecyclerView.Adapter<ShopListAdapter.ShopListViewHolder>
         holder.tvName.text = shopItem.name
         holder.tvCount.text = shopItem.count.toString()
         Log.d(TAG, " Binding ${shopItem.enabled}")
+
+        holder.itemView.setOnLongClickListener{
+            onShopItemLongClick?.invoke(shopItem)
+            true
+        }
+
+        holder.itemView.setOnClickListener{
+            onShopItemClick?.invoke(shopItem)
+        }
     }
 
 
