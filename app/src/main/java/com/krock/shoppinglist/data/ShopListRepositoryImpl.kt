@@ -2,28 +2,36 @@ package com.krock.shoppinglist.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.SortedList
 import com.krock.shoppinglist.domain.ShopItem
 import com.krock.shoppinglist.domain.ShopListRepository
+import kotlin.random.Random
 
 class ShopListRepositoryImpl : ShopListRepository {
-    private val shopList : MutableList<ShopItem> = ArrayList()
+    private val shopList = sortedSetOf<ShopItem>({ p0, p1 ->
+        p0.id.compareTo(p1.id)
+    })
+
+    //    private val shopList = sortedSetOf<ShopItem>({ o1, o2 ->
+//        o1.id.compareTo(o2.id)
+//    })
     private val liveShopList: MutableLiveData<List<ShopItem>> = MutableLiveData();
     private var itemId = 0
 
     init {
-        for (i in 0 until 10){
-            val shopItem = ShopItem("Name${i}",1,true)
+        for (i in 0 until 1000) {
+            val shopItem = ShopItem("Name${i}", 1, Random.nextBoolean())
             addShopItem(shopItem)
         }
 
     }
 
 
-    override fun addShopItem( shopItem: ShopItem) {
-        if (shopItem.id == UNDEFINED){
+    override fun addShopItem(shopItem: ShopItem) {
+        if (shopItem.id == UNDEFINED) {
             shopItem.id = itemId++
         }
-        shopList. add(shopItem)
+        shopList.add(shopItem)
         update()
     }
 
@@ -52,7 +60,7 @@ class ShopListRepositoryImpl : ShopListRepository {
     }
 
 
-    companion object{
+    companion object {
         private const val UNDEFINED = -1
     }
 
