@@ -3,14 +3,18 @@ package com.krock.shoppinglist.presentation
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.krock.shoppinglist.R
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var adapter: ShopListAdapter
+    private lateinit var buttonAdd: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +24,10 @@ class MainActivity : AppCompatActivity() {
         viewModel.shopList.observe(this) {
             adapter.submitList(it)
             Log.d(TAG, it.toString())
+        }
+      buttonAdd = findViewById(R.id.button_add_shop_item)
+        buttonAdd.setOnClickListener {
+            startActivity(ShopItemActivity.newIntentAdd(this))
         }
     }
 
@@ -38,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         setupLongClickListener()
         setupClickListener()
         setupSwipedListener(rvChopList)
+
     }
 
     private fun setupSwipedListener(rvChopList: RecyclerView) {
@@ -60,6 +69,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickListener() {
         adapter.onShopItemClick = {
+            startActivity(ShopItemActivity.newIntentEdit(this,it.id))
             Log.d(TAG, it.toString())
         }
     }

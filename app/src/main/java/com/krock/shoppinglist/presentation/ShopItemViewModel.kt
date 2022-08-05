@@ -11,7 +11,7 @@ import com.krock.shoppinglist.domain.ShopItem
 import java.lang.Exception
 
 class ShopItemViewModel : ViewModel() {
-    private val shopListRepository = ShopListRepositoryImpl()
+    private val shopListRepository = ShopListRepositoryImpl
     private val editShopItemUseCase = EditShopItemUseCase(shopListRepository)
     private val addShopUseCase = AddShopUseCase(shopListRepository)
     private val getShopItemUseCase = GetShopItemUseCase(shopListRepository)

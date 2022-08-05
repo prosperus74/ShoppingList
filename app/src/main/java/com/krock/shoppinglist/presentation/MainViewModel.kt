@@ -8,8 +8,7 @@ import com.krock.shoppinglist.domain.*
 
 class MainViewModel : ViewModel() {
 
-
-    private val shopListRepository = ShopListRepositoryImpl()
+    private val shopListRepository = ShopListRepositoryImpl
 
     private val getShopListUseCase = GetShopListUseCase(shopListRepository)
     private val editShopItemUseCase = EditShopItemUseCase(shopListRepository)
@@ -26,8 +25,5 @@ class MainViewModel : ViewModel() {
         val shopItemTemp = shopItem.copy(enabled = !shopItem.enabled)
         editShopItemUseCase.editShopItem(shopItemTemp)
     }
-
-
-
 
 }
