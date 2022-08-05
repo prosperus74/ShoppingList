@@ -12,9 +12,6 @@ class ShopListRepositoryImpl : ShopListRepository {
         p0.id.compareTo(p1.id)
     })
 
-    //    private val shopList = sortedSetOf<ShopItem>({ o1, o2 ->
-//        o1.id.compareTo(o2.id)
-//    })
     private val liveShopList: MutableLiveData<List<ShopItem>> = MutableLiveData();
     private var itemId = 0
 
@@ -23,9 +20,7 @@ class ShopListRepositoryImpl : ShopListRepository {
             val shopItem = ShopItem("Name${i}", 1, Random.nextBoolean())
             addShopItem(shopItem)
         }
-
     }
-
 
     override fun addShopItem(shopItem: ShopItem) {
         if (shopItem.id == UNDEFINED) {
