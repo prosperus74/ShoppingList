@@ -18,19 +18,13 @@ class MainViewModel : ViewModel() {
 
     val shopList = getShopListUseCase.getShopList() //MutableLiveData<List<ShopItem>>()
 
-//    fun getShopList(): LiveData<List<ShopItem>> {
-//        return getShopListUseCase.getShopList()
-//    }
-
     fun deleteShopItem(shopItem: ShopItem) {
         deleteShopUseCase.deleteShopItem(shopItem)
-        //getShopList()
     }
 
     fun changeEnableState(shopItem: ShopItem) {
         val shopItemTemp = shopItem.copy(enabled = !shopItem.enabled)
         editShopItemUseCase.editShopItem(shopItemTemp)
-       // getShopList()
     }
 
 
