@@ -1,12 +1,18 @@
 package com.krock.shoppinglist.presentation
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
+import com.krock.shoppinglist.R
 import com.krock.shoppinglist.domain.ShopItem
 
 class ShopListDiffCallback(
     private val oldList: List<ShopItem>,
     private val newList: List<ShopItem>
-):DiffUtil.Callback() {
+) : DiffUtil.Callback() {
     override fun getOldListSize(): Int {
         return oldList.size
     }
