@@ -34,6 +34,7 @@ class ShopItemFragment : Fragment() {
 
 
     override fun onAttach(context: Context) {
+        Log.d(TAG,"onAttach")
         super.onAttach(context)
         if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
@@ -43,6 +44,7 @@ class ShopItemFragment : Fragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG,"onCreate")
         super.onCreate(savedInstanceState)
         checkParam()
     }
@@ -53,10 +55,12 @@ class ShopItemFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d(TAG,"onCreateView")
         return inflater.inflate(R.layout.fragment_shop_item, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(TAG,"onViewCreated")
         viewModel = ViewModelProvider(this).get(ShopItemViewModel::class.java)
         // перенесли в onCreate checkParam()
         initViews(view)
@@ -166,6 +170,41 @@ class ShopItemFragment : Fragment() {
         fun onEditingFinished()
     }
 
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG,"onStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG,"onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG,"onPause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG,"onStop")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d(TAG,"onDestroyView")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG,"onDestroy")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.d(TAG,"onDetach")
+    }
+
 
     companion object {
         fun newInstanceAdd(): ShopItemFragment {
@@ -190,7 +229,7 @@ class ShopItemFragment : Fragment() {
         private const val MODE_EDIT = "edit"
         private const val EXTRA_MODE_UNKNOWN = ""
         private const val ID = "extra_id"
-        private const val TAG = "ShopItemActivity"
+        private const val TAG = "ShopItemFragment"
     }
 
 }

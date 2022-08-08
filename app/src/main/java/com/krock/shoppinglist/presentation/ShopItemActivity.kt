@@ -82,6 +82,8 @@ class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinished
             return intent
         }
 
+
+
         private const val EXTRA_MODE = "extra_mode"
         private const val EXTRA_MODE_ADD = "add"
         private const val EXTRA_MODE_EDIT = "edit"
