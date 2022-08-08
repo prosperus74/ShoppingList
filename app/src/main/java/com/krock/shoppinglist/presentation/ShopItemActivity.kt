@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -17,7 +18,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.krock.shoppinglist.R
 import com.krock.shoppinglist.domain.ShopItem
 
-class ShopItemActivity : AppCompatActivity() {
+class ShopItemActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener{
 
     private var screenmode = EXTRA_MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
@@ -61,6 +62,10 @@ class ShopItemActivity : AppCompatActivity() {
         }
     }
 
+    override fun onEditingFinished() {
+        Toast.makeText(this, "Saved Success", Toast.LENGTH_SHORT).show()
+        finish()
+    }
 
     companion object {
 

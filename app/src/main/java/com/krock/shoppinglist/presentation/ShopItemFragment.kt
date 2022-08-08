@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
@@ -18,6 +19,8 @@ import com.krock.shoppinglist.R
 import com.krock.shoppinglist.domain.ShopItem
 
 class ShopItemFragment : Fragment() {
+
+    private lateinit var  onEditingFinishedListener :OnEditingFinishedListener
 
     private lateinit var viewModel: ShopItemViewModel
 
@@ -29,6 +32,15 @@ class ShopItemFragment : Fragment() {
     private var screenmode = EXTRA_MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnEditingFinishedListener) {
+            onEditingFinishedListener = context
+        } else {
+            throw RuntimeException(" Activity must implement onEditingFinishedListener")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,10 +69,8 @@ class ShopItemFragment : Fragment() {
 
 
     private fun listeners() {
-
-
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
-            activity?.onBackPressed()
+            onEditingFinishedListener?.onEditingFinished()
         }
         viewModel.errorInputName.observe(viewLifecycleOwner) {
             if (it) {
@@ -152,10 +162,12 @@ class ShopItemFragment : Fragment() {
         }
     }
 
+    interface OnEditingFinishedListener {
+        fun onEditingFinished()
+    }
+
 
     companion object {
-
-
         fun newInstanceAdd(): ShopItemFragment {
             return ShopItemFragment().apply {
                 arguments = Bundle().apply {
