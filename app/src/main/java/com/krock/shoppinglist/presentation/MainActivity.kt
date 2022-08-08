@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -15,20 +17,31 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainViewModel
     private lateinit var adapter: ShopListAdapter
     private lateinit var buttonAdd: FloatingActionButton
+    private var shopItemContainer: FragmentContainerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        shopItemContainer = findViewById(R.id.shop_item_container)
         setRecyclerView()
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
         viewModel.shopList.observe(this) {
             adapter.submitList(it)
             Log.d(TAG, it.toString())
         }
-      buttonAdd = findViewById(R.id.button_add_shop_item)
+        buttonAdd = findViewById(R.id.button_add_shop_item)
         buttonAdd.setOnClickListener {
-            startActivity(ShopItemActivity.newIntentAdd(this))
+            if (isOnePanelMode()) {
+                startActivity(ShopItemActivity.newIntentAdd(this))
+            } else {
+                launchFragment(ShopItemFragment.newInstanceAdd())
+            }
         }
+    }
+
+    private fun isOnePanelMode(): Boolean {
+        return shopItemContainer == null
     }
 
     private fun setRecyclerView() {
@@ -47,6 +60,14 @@ class MainActivity : AppCompatActivity() {
         setupClickListener()
         setupSwipedListener(rvChopList)
 
+    }
+
+    private fun launchFragment(fragment: Fragment) {
+        supportFragmentManager.popBackStack()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.shop_item_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun setupSwipedListener(rvChopList: RecyclerView) {
@@ -69,7 +90,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickListener() {
         adapter.onShopItemClick = {
-            startActivity(ShopItemActivity.newIntentEdit(this,it.id))
+            if (isOnePanelMode()) {
+                startActivity(ShopItemActivity.newIntentEdit(this, it.id))
+            } else {
+                launchFragment(ShopItemFragment.newInstanceEdit(it.id))
+            }
             Log.d(TAG, it.toString())
         }
     }
