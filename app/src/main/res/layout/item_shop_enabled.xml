@@ -2,7 +2,7 @@
 <layout>
     <data>
         <variable
-            name="shopItem"
+            name="shopItemm"
             type="com.krock.shoppinglist.domain.ShopItem" />
 
     </data>
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="@color/white"
-            android:text = "@{shopItem.name}"
+            android:text = "@{shopItemm.name}"
             android:textSize="16sp"
             android:textStyle="bold"
             tools:text="Салфетки" />
@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:text = "@{String.valueOf(shopItem.count)}"
+            android:text = "@{String.valueOf(shopItemm.count)}"
             android:textSize="16sp"
             android:textStyle="bold"
             tools:text="1" />

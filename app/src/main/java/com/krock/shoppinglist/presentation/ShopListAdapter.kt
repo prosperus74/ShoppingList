@@ -55,7 +55,7 @@ class ShopListAdapter : ListAdapter<ShopItem,ShopListAdapter.ShopListViewHolder>
 
         when(binding) {
             is ItemShopEnabledBinding -> {
-                binding.shopItem = shopItem
+                binding.shopItemm = shopItem
             }
             is ItemShopDisabledBinding -> {
                 binding.shopItem = shopItem
