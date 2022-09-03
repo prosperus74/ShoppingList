@@ -16,25 +16,25 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.krock.shoppinglist.R
+import com.krock.shoppinglist.databinding.FragmentShopItemBinding
 import com.krock.shoppinglist.domain.ShopItem
 
 class ShopItemFragment : Fragment() {
 
-    private lateinit var  onEditingFinishedListener :OnEditingFinishedListener
+    private lateinit var onEditingFinishedListener: OnEditingFinishedListener
 
     private lateinit var viewModel: ShopItemViewModel
 
-    private lateinit var til_name: TextInputLayout
-    private lateinit var et_name: TextInputEditText
-    private lateinit var til_count: TextInputLayout
-    private lateinit var et_count: TextInputEditText
-    private lateinit var save_button: Button
+    private var _binding: FragmentShopItemBinding? = null
+    private val binding: FragmentShopItemBinding
+        get() = _binding ?: throw RuntimeException("FragmentShopItemBinding == null")
+
     private var screenmode = EXTRA_MODE_UNKNOWN
     private var shopItemId = ShopItem.UNDEFINED_ID
 
 
     override fun onAttach(context: Context) {
-        Log.d(TAG,"onAttach")
+        Log.d(TAG, "onAttach")
         super.onAttach(context)
         if (context is OnEditingFinishedListener) {
             onEditingFinishedListener = context
@@ -44,7 +44,7 @@ class ShopItemFragment : Fragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG,"onCreate")
+        Log.d(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         checkParam()
     }
@@ -54,16 +54,18 @@ class ShopItemFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        Log.d(TAG,"onCreateView")
-        return inflater.inflate(R.layout.fragment_shop_item, container, false)
+    ): View {
+        Log.d(TAG, "onCreateView")
+        _binding = FragmentShopItemBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(TAG,"onViewCreated")
+        Log.d(TAG, "onViewCreated")
         viewModel = ViewModelProvider(this).get(ShopItemViewModel::class.java)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         // перенесли в onCreate checkParam()
-        initViews(view)
         when (screenmode) {
             MODE_ADD -> startAddMode()
             MODE_EDIT -> startEditMode()
@@ -76,23 +78,8 @@ class ShopItemFragment : Fragment() {
         viewModel.shouldCloseScreen.observe(viewLifecycleOwner) {
             onEditingFinishedListener?.onEditingFinished()
         }
-        viewModel.errorInputName.observe(viewLifecycleOwner) {
-            if (it) {
-                til_name.error = "Message error input"
-            } else {
-                til_name.error = null
-            }
-        }
 
-        viewModel.errorInputCount.observe(viewLifecycleOwner) {
-            if (it) {
-                til_count.error = "Count error input"
-            } else {
-                til_count.error = null
-            }
-        }
-
-        et_name.addTextChangedListener(object : TextWatcher {
+        binding.etName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
@@ -105,7 +92,7 @@ class ShopItemFragment : Fragment() {
 
         })
 
-        et_count.addTextChangedListener(object : TextWatcher {
+       binding.etCount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
@@ -120,32 +107,20 @@ class ShopItemFragment : Fragment() {
     }
 
     private fun startAddMode() {
-        save_button.setOnClickListener {
-            viewModel.addShopItem(et_name.text?.toString(), et_count.text?.toString())
+        binding.saveButton.setOnClickListener {
+            viewModel.addShopItem(binding.etName.text?.toString(),  binding.etCount.text?.toString())
         }
     }
 
     private fun startEditMode() {
         Log.d(TAG, shopItemId.toString())
         viewModel.getShopItem(shopItemId)
-        viewModel.shopItemEdit.observe(viewLifecycleOwner) {
-            Log.d(TAG, it.toString())
-            et_name.setText(it.name)
-            et_count.setText(it.count.toString())
-        }
-        save_button.setOnClickListener {
-            viewModel.editShopItem(et_name.text?.toString(), et_count.text?.toString())
+
+        binding.saveButton.setOnClickListener {
+            viewModel.editShopItem(binding.etName.text?.toString(), binding.etCount.text?.toString())
         }
     }
 
-
-    private fun initViews(view: View) {
-        til_name = view.findViewById(R.id.til_name)
-        et_name = view.findViewById(R.id.et_name)
-        til_count = view.findViewById(R.id.til_count)
-        et_count = view.findViewById(R.id.et_count)
-        save_button = view.findViewById(R.id.save_button)
-    }
 
     private fun checkParam() {
         val args = requireArguments()
@@ -172,37 +147,37 @@ class ShopItemFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        Log.d(TAG,"onStart")
+        Log.d(TAG, "onStart")
     }
 
     override fun onResume() {
         super.onResume()
-        Log.d(TAG,"onResume")
+        Log.d(TAG, "onResume")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d(TAG,"onPause")
+        Log.d(TAG, "onPause")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d(TAG,"onStop")
+        Log.d(TAG, "onStop")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d(TAG,"onDestroyView")
+        Log.d(TAG, "onDestroyView")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG,"onDestroy")
+        Log.d(TAG, "onDestroy")
     }
 
     override fun onDetach() {
         super.onDetach()
-        Log.d(TAG,"onDetach")
+        Log.d(TAG, "onDetach")
     }
 
 

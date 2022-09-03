@@ -3,6 +3,7 @@ package com.krock.shoppinglist.presentation
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
@@ -13,26 +14,27 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.krock.shoppinglist.R
+import com.krock.shoppinglist.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedListener {
     private lateinit var viewModel: MainViewModel
-    private lateinit var adapter: ShopListAdapter
+    private lateinit var shopListAdapter: ShopListAdapter
     private lateinit var buttonAdd: FloatingActionButton
-    private var shopItemContainer: FragmentContainerView? = null
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        shopItemContainer = findViewById(R.id.shop_item_container)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setRecyclerView()
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         viewModel.shopList.observe(this) {
-            adapter.submitList(it)
+            shopListAdapter.submitList(it)
             Log.d(TAG, it.toString())
         }
-        buttonAdd = findViewById(R.id.button_add_shop_item)
-        buttonAdd.setOnClickListener {
+
+        binding.buttonAddShopItem.setOnClickListener {
             if (isOnePanelMode()) {
                 startActivity(ShopItemActivity.newIntentAdd(this))
             } else {
@@ -42,25 +44,26 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     }
 
     private fun isOnePanelMode(): Boolean {
-        return shopItemContainer == null
+        return binding.shopItemContainer == null
     }
 
     private fun setRecyclerView() {
-        val rvChopList = this.findViewById<RecyclerView>(R.id.rv_shop_list)
-        adapter = ShopListAdapter()
-        rvChopList.adapter = adapter
-        rvChopList.recycledViewPool.setMaxRecycledViews(
-            ShopListAdapter.ENABLED,
-            ShopListAdapter.PULL_SIZE
-        )
-        rvChopList.recycledViewPool.setMaxRecycledViews(
-            ShopListAdapter.DISABLED,
-            ShopListAdapter.PULL_SIZE
-        )
+
+        with(binding.rvShopList) {
+            shopListAdapter = ShopListAdapter()
+            adapter = shopListAdapter
+            recycledViewPool.setMaxRecycledViews(
+                ShopListAdapter.ENABLED,
+                ShopListAdapter.PULL_SIZE
+            )
+            recycledViewPool.setMaxRecycledViews(
+                ShopListAdapter.DISABLED,
+                ShopListAdapter.PULL_SIZE
+            )
+        }
         setupLongClickListener()
         setupClickListener()
-        setupSwipedListener(rvChopList)
-
+        setupSwipedListener(binding.rvShopList)
     }
 
     private fun launchFragment(fragment: Fragment) {
@@ -82,7 +85,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                viewModel.deleteShopItem(adapter.currentList.get(viewHolder.adapterPosition))
+                viewModel.deleteShopItem(shopListAdapter.currentList.get(viewHolder.adapterPosition))
             }
         }
         val itemTouchHelper = ItemTouchHelper(simpleCallback)
@@ -90,7 +93,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     }
 
     private fun setupClickListener() {
-        adapter.onShopItemClick = {
+        shopListAdapter.onShopItemClick = {
             if (isOnePanelMode()) {
                 startActivity(ShopItemActivity.newIntentEdit(this, it.id))
             } else {
@@ -101,7 +104,7 @@ class MainActivity : AppCompatActivity(), ShopItemFragment.OnEditingFinishedList
     }
 
     private fun setupLongClickListener() {
-        adapter.onShopItemLongClick = {
+        shopListAdapter.onShopItemLongClick = {
             viewModel.changeEnableState(it)
         }
     }

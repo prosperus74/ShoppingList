@@ -6,10 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.krock.shoppinglist.R
+import com.krock.shoppinglist.databinding.ItemShopDisabledBinding
+import com.krock.shoppinglist.databinding.ItemShopEnabledBinding
 import com.krock.shoppinglist.domain.ShopItem
 import java.lang.Exception
 
@@ -25,30 +29,43 @@ class ShopListAdapter : ListAdapter<ShopItem,ShopListAdapter.ShopListViewHolder>
             DISABLED ->     R.layout.item_shop_disabled
             else -> throw RuntimeException("unknown viewType $viewType")
         }
-        val view: View = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
-       return ShopListViewHolder(view)
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(
+            LayoutInflater.from(parent.context),
+            layoutId,
+            parent,
+            false
+        )
+       return ShopListViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ShopListViewHolder, position: Int) {
         val shopItem = getItem(position)
-        holder.tvName.text = shopItem.name
-        holder.tvCount.text = shopItem.count.toString()
+        val binding = holder.binding
+
         Log.d(TAG, " Binding ${shopItem.enabled}")
 
-        holder.itemView.setOnLongClickListener{
+        binding.root.setOnLongClickListener{
             onShopItemLongClick?.invoke(shopItem)
             true
         }
 
-        holder.itemView.setOnClickListener{
+        binding.root.setOnClickListener{
             onShopItemClick?.invoke(shopItem)
+        }
+
+        when(binding) {
+            is ItemShopEnabledBinding -> {
+                binding.shopItem = shopItem
+            }
+            is ItemShopDisabledBinding -> {
+                binding.shopItem = shopItem
+            }
+
         }
     }
 
-    class ShopListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvName: TextView = itemView.findViewById(R.id.tv_name)
-        val tvCount: TextView = itemView.findViewById(R.id.tv_count)
-    }
+    class ShopListViewHolder(val binding :ViewDataBinding
+    ) : RecyclerView.ViewHolder(binding.root)
 
     companion object {
         private const val TAG = "ShopListAdapter"
@@ -67,8 +84,8 @@ class ShopListAdapter : ListAdapter<ShopItem,ShopListAdapter.ShopListViewHolder>
 
     override fun onViewRecycled(holder: ShopListViewHolder) {
         super.onViewRecycled(holder)
-        holder.tvName.text = ""
-        holder.tvCount.text = ""
+       // holder.tvName.text = ""
+       // holder.tvCount.text = ""
     }
 
 }
