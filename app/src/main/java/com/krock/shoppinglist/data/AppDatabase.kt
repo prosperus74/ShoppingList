@@ -16,7 +16,7 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
         private val LOCK = Any()
 
-        fun getInstance(applicateion: Application): AppDatabase {
+        fun getInstance(application: Application): AppDatabase {
             INSTANCE?.let {
                 return it
             }
@@ -25,7 +25,7 @@ abstract class AppDatabase : RoomDatabase() {
                     return it
                 }
                 val db = Room.databaseBuilder(
-                    applicateion,
+                    application,
                     AppDatabase::class.java,
                     DB_NAME
                 ).build()
