@@ -3,7 +3,9 @@ package com.krock.shoppinglist.data
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.recyclerview.widget.SortedList
 import com.krock.shoppinglist.domain.ShopItem
 import com.krock.shoppinglist.domain.ShopListRepository
@@ -27,10 +29,14 @@ class ShopListRepositoryImpl(application: Application) : ShopListRepository {
     }
 
     override fun getShopItem(shopItemId: Int): ShopItem {
-        val dbModel =  shopListDao.getShopItem(shopItemId)
+        val dbModel = shopListDao.getShopItem(shopItemId)
         return mapper.dbModelToShopItem(dbModel)
     }
 
-    override fun getShopList(): LiveData<List<ShopItem>> = shopListDao.getShopList()
+    override fun getShopList(): LiveData<List<ShopItem>> = Transformations.map(
+        shopListDao.getShopList(),
+    ){
+        mapper.listDBModelToShopItem(it)
+    }
 
 }
