@@ -1,14 +1,17 @@
 package com.krock.shoppinglist.presentation
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.*
 import com.krock.shoppinglist.data.ShopListRepositoryImpl
 import com.krock.shoppinglist.domain.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val shopListRepository = ShopListRepositoryImpl
+    private val shopListRepository = ShopListRepositoryImpl(application)
 
     private val getShopListUseCase = GetShopListUseCase(shopListRepository)
     private val editShopItemUseCase = EditShopItemUseCase(shopListRepository)
@@ -18,12 +21,16 @@ class MainViewModel : ViewModel() {
     val shopList = getShopListUseCase.getShopList() //MutableLiveData<List<ShopItem>>()
 
     fun deleteShopItem(shopItem: ShopItem) {
-        deleteShopUseCase.deleteShopItem(shopItem)
+        viewModelScope.launch {
+            deleteShopUseCase.deleteShopItem(shopItem)
+        }
     }
 
     fun changeEnableState(shopItem: ShopItem) {
-        val shopItemTemp = shopItem.copy(enabled = !shopItem.enabled)
-        editShopItemUseCase.editShopItem(shopItemTemp)
+        viewModelScope.launch {
+            val shopItemTemp = shopItem.copy(enabled = !shopItem.enabled)
+            editShopItemUseCase.editShopItem(shopItemTemp)
+        }
     }
 
 }
